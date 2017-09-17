@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  third_party_vendor: one
+  name: MyString
+  company_id: 1
+  email: MyString
+
+two:
+  third_party_vendor: two
+  name: MyString
+  company_id: 1
+  email: MyString

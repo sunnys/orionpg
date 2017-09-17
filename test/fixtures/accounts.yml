@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company: one
+  name: MyString
+  company_id: 1
+  total: 1.5
+  unpaid: 1.5
+  paid: 1.5
+
+two:
+  company: two
+  name: MyString
+  company_id: 1
+  total: 1.5
+  unpaid: 1.5
+  paid: 1.5

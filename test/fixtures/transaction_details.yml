@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  transaction: one
+  transaction_id: 1
+  type: 
+  source: MyString
+  destination: MyString
+  amount: 1.5
+  confirmed: false
+
+two:
+  transaction: two
+  transaction_id: 1
+  type: 
+  source: MyString
+  destination: MyString
+  amount: 1.5
+  confirmed: false
