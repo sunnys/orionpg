@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170825163412) do
+ActiveRecord::Schema.define(version: 20170924113222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,12 +67,14 @@ ActiveRecord::Schema.define(version: 20170825163412) do
   end
 
   create_table "employees", force: :cascade do |t|
+    t.integer  "user_id"
     t.integer  "company_id"
     t.string   "name"
     t.string   "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_employees_on_company_id", using: :btree
+    t.index ["user_id"], name: "index_employees_on_user_id", using: :btree
   end
 
   create_table "flight_informations", force: :cascade do |t|
@@ -87,18 +89,20 @@ ActiveRecord::Schema.define(version: 20170825163412) do
     t.datetime "journey_time"
     t.float    "travel_time"
     t.boolean  "refundable"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "third_party_vendor_id"
+    t.string   "type"
   end
 
   create_table "matches", force: :cascade do |t|
-    t.integer  "user_id"
+    t.integer  "employee_id"
     t.integer  "reportee_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.index ["employee_id", "reportee_id"], name: "index_matches_on_employee_id_and_reportee_id", unique: true, using: :btree
+    t.index ["employee_id"], name: "index_matches_on_employee_id", using: :btree
     t.index ["reportee_id"], name: "index_matches_on_reportee_id", using: :btree
-    t.index ["user_id", "reportee_id"], name: "index_matches_on_user_id_and_reportee_id", unique: true, using: :btree
-    t.index ["user_id"], name: "index_matches_on_user_id", using: :btree
   end
 
   create_table "my_accounts", force: :cascade do |t|
@@ -113,6 +117,7 @@ ActiveRecord::Schema.define(version: 20170825163412) do
     t.string   "email"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
+    t.integer  "user_id"
     t.index ["third_party_vendor_id"], name: "index_third_party_employees_on_third_party_vendor_id", using: :btree
   end
 
@@ -131,6 +136,7 @@ ActiveRecord::Schema.define(version: 20170825163412) do
     t.datetime "transaction_token_created_at"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
+    t.string   "state"
     t.index ["employee_id"], name: "index_tokens_on_employee_id", using: :btree
   end
 
@@ -196,8 +202,9 @@ ActiveRecord::Schema.define(version: 20170825163412) do
   add_foreign_key "accounts", "companies"
   add_foreign_key "accounts", "third_party_vendors"
   add_foreign_key "employees", "companies"
-  add_foreign_key "matches", "users"
-  add_foreign_key "matches", "users", column: "reportee_id"
+  add_foreign_key "employees", "users"
+  add_foreign_key "matches", "employees"
+  add_foreign_key "matches", "employees", column: "reportee_id"
   add_foreign_key "third_party_employees", "third_party_vendors"
   add_foreign_key "third_party_vendors", "companies"
   add_foreign_key "tokens", "employees"

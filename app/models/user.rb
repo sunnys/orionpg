@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   devise :registerable,
           :recoverable, :rememberable, :trackable, :validatable
           #:confirmable, :omniauthable
-  # include DeviseTokenAuth::Concerns::User
-  has_many :matches
-  has_many :reportees, through: :matches, dependent: :destroy
+  include DeviseTokenAuth::Concerns::User
+  has_one :employee
+  has_one :third_party_employee
 end

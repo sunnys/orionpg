@@ -1,5 +1,5 @@
-class TransactsController < ApplicationController
-  before_action :set_transact, only: [:show, :update, :destroy]
+class TransactsController < ApiController
+  before_action :set_transact, only: [:show, :update, :destroy, :request_for_approval, :approve_transaction, :reject_transaction]
 
   # GET /transacts
   def index
@@ -36,6 +36,63 @@ class TransactsController < ApplicationController
   # DELETE /transacts/1
   def destroy
     @transact.destroy
+  end
+
+  # POST get deatils of flight
+  def get_flights
+    # TODO: Change the query accordding to request
+    @flights = FlightInformation.all
+    render json: @flights
+  end
+
+  # POST select a particular ticket
+  def select_flight
+    @flight = FlightInformation.find(params[:id])
+    @current_employee = Employee.first
+    token = @current_employee.create_token
+    @transact = @current_employee.create_transaction(token.id, @flight)
+    render json: @transact 
+  end
+
+  def request_for_approval
+    if !@transact.nil?
+      @token = @transact.token
+      @token.request_for_approval
+      @token.save!
+      render json: @token
+    else 
+      render json: {message: "No Transaction found!"}
+    end
+  end
+
+  def approve_transaction
+    if !@transact.nil? # and 
+      # if current_user.id == @transacts.employee.managers.last.id
+        @token = @transact.token
+        @token.request_accepted
+        @token.save!
+        render json: {message: "Token is sent for approval."}
+      # else
+      #   render json: {message: "No Authorization!"}
+      # end
+    else 
+      render json: {message: "No Transaction found!"}
+    end
+  end
+
+  def reject_transaction
+    if !@transact.nil?
+      # if current_user.id == @transacts.employee.managers.last.id
+        @token = @transact.token
+        @token.request_rejected
+        @token.save!
+        render json: {message: "Token is sent for approval."}
+      # else
+      #   render json: {message: "No Authorization!"}
+      # end
+    else 
+      render json: {message: "No Transaction found!"}
+    end
   end
 
   private
