@@ -1,16 +1,29 @@
 class Token < ApplicationRecord
   belongs_to :employee
   has_one :transact
-
+  
+  has_one_time_password
   # attr_accessor :state
   before_save :validate_token
 
+  # before_transition from: any, to: :use do |token, transition|
+    
+  # end
+
   def validate_token
-    if self.transaction_token_created_at + 30.minutes > Time.now
+    if self.transaction_token_created_at + 720.minutes > Time.now
       true
     else
       false
     end
+  end
+
+  def validate_otp(otp)
+    self.authenticate_otp(otp, drift: 600)
+  end
+
+  def generate_otp
+    self.otp_code
   end
 
   state_machine :state, initial: :initial do
@@ -55,8 +68,8 @@ class Token < ApplicationRecord
       transition :validated => :used
     end
 
-    event 'cancle' do 
-      transition [:initiated, :submitted, :rejected, :approved, :validated] => :cancled
+    event 'cancel' do 
+      transition [:initiated, :submitted, :rejected, :approved, :validated] => :canceled
     end
 
     

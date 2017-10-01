@@ -47,4 +47,6 @@ class Employee < ActiveRecord::Base
     transact = Transact.find(transact_id)
     transact.token.request_rejected
   end
+
+  
 end

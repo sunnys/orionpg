@@ -1,5 +1,5 @@
 class TransactsController < ApiController
-  before_action :set_transact, only: [:show, :update, :destroy, :request_for_approval, :approve_transaction, :reject_transaction]
+  before_action :set_transact, only: [:show, :update, :destroy, :request_for_approval, :approve_transaction, :reject_transaction, :book_transaction, cancel_transaction, :generate_otp, :verify_otp]
 
   # GET /transacts
   def index
@@ -92,6 +92,50 @@ class TransactsController < ApiController
       # end
     else 
       render json: {message: "No Transaction found!"}
+    end
+  end
+
+  def generate_otp
+    if !@transact.nil?
+      @token = @transact.token
+      otp = @token.generate_otp
+      # TODO: send otp via e-mail
+      render :text => otp
+      return
+    end
+  end
+
+  def verify_otp
+    if !@transact.nil?
+      @token = @transact.token
+      otp = params[:otp]
+      if @token.verify_otp(otp)
+        @token.use
+        @token.save!
+        render :text => "Transaction Successful"
+        return
+      else
+        @token.cancel
+        @token.save!
+        render :text => "Wrong OTP"
+        return
+      end
+    end
+  end
+
+  def book_transaction
+    if !@transact.nil?
+      @token = @transact.token
+      @token.use
+      @token.save!
+    end
+  end
+
+  def cancel_transaction
+    if !@transact.nil?
+      @token = @transact.token
+      @token.cancel
+      @token.save!
     end
   end
 

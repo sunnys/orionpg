@@ -51,6 +51,9 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_model_otp (1.2.0)
+      activemodel
+      rotp
     activejob (5.0.4)
       activesupport (= 5.0.4)
       globalid (>= 0.3.6)
@@ -184,6 +187,7 @@ GEM
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
+    rotp (3.3.0)
     sass (3.5.1)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -232,6 +236,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_model_otp
   activeadmin!
   bcrypt (~> 3.1.7)
   byebug
@@ -252,6 +257,7 @@ DEPENDENCIES
   simple_command
   spring
   spring-watcher-listen (~> 2.0.0)
+  state_machines
   state_machines-activerecord
   tzinfo-data
   uglifier (>= 2.7.2)
