@@ -1,16 +1,37 @@
 class TransactsController < ApiController
-  before_action :set_transact, only: [:show, :update, :destroy, :request_for_approval, :approve_transaction, :reject_transaction, :book_transaction, cancel_transaction, :generate_otp, :verify_otp]
-
+  before_action :set_transact, only: [:show, :update, :destroy, :request_for_approval, :approve_transaction, :reject_transaction, :book_transaction, :cancel_transaction, :generate_otp, :verify_otp]
   # GET /transacts
   def index
     @transacts = Transact.all
-
     render json: @transacts
   end
 
+  def get_employee_transact
+    @user = current_user.employee
+    @transacts = @user.transacts
+    render json: @transacts
+  end
+
+  def get_company_transact
+    @transacts = []
+    @user = current_user.employee
+    @company = @user.company
+    @company.employees.each do |employee|
+      @transacts << employee.transacts
+    end
+    @transacts = @transacts.flatten.compact
+    render json: @transacts
+  end
   # GET /transacts/1
   def show
-    render json: @transact
+    transact = {}
+    # transact = @transact
+    transact['employee'] = @transact.employee.email
+    transact['company'] = @transact.company.name
+    transact['token'] = @transact.token.transaction_token
+    transact['vendor'] = @transact.third_party_vendor.name
+    transact['transaction_details'] = @transact.transaction_details
+    render json: transact
   end
 
   # POST /transacts
@@ -43,6 +64,11 @@ class TransactsController < ApiController
     # TODO: Change the query accordding to request
     @flights = FlightInformation.all
     render json: @flights
+  end
+
+  def get_flight
+    @flight = FlightInformation.find(params[:id])
+    render json: @flight
   end
 
   # POST select a particular ticket
@@ -109,15 +135,16 @@ class TransactsController < ApiController
     if !@transact.nil?
       @token = @transact.token
       otp = params[:otp]
-      if @token.verify_otp(otp)
+      if @token.validate_otp(otp)
+        @token.valid
         @token.use
         @token.save!
-        render :text => "Transaction Successful"
+        render :json => {code: '200', msg: "Otp verification successful..."}
         return
       else
-        @token.cancel
-        @token.save!
-        render :text => "Wrong OTP"
+        # @token.cancel
+        # @token.save!
+        render :json => {code: '401', msg: "Otp Verification failed..."}
         return
       end
     end
@@ -126,8 +153,9 @@ class TransactsController < ApiController
   def book_transaction
     if !@transact.nil?
       @token = @transact.token
-      @token.use
+      # @token.use
       @token.save!
+      render :json => {message: "You transaction has been processed"}
     end
   end
 

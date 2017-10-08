@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170929115047) do
+ActiveRecord::Schema.define(version: 20171002080132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,6 +111,15 @@ ActiveRecord::Schema.define(version: 20170929115047) do
     t.datetime "updated_at",    null: false
   end
 
+  create_table "operations", force: :cascade do |t|
+    t.integer  "account_id"
+    t.string   "type"
+    t.float    "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_operations_on_account_id", using: :btree
+  end
+
   create_table "third_party_employees", force: :cascade do |t|
     t.integer  "third_party_vendor_id"
     t.string   "name"
@@ -151,6 +160,11 @@ ActiveRecord::Schema.define(version: 20170929115047) do
     t.boolean  "confirmed"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+    t.boolean  "two_way"
+    t.boolean  "refundable"
+    t.date     "journey_date"
+    t.datetime "journey_time"
+    t.float    "travel_time"
     t.index ["transact_id"], name: "index_transaction_details_on_transact_id", using: :btree
   end
 
@@ -206,6 +220,7 @@ ActiveRecord::Schema.define(version: 20170929115047) do
   add_foreign_key "employees", "users"
   add_foreign_key "matches", "employees"
   add_foreign_key "matches", "employees", column: "reportee_id"
+  add_foreign_key "operations", "accounts"
   add_foreign_key "third_party_employees", "third_party_vendors"
   add_foreign_key "third_party_vendors", "companies"
   add_foreign_key "tokens", "employees"

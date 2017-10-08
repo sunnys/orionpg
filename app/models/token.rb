@@ -26,6 +26,10 @@ class Token < ApplicationRecord
     self.otp_code
   end
 
+  def after_use_event
+    self.transact.pay_for_transaction
+  end
+
   state_machine :state, initial: :initial do
     # before_transition
     #state :initial
@@ -36,6 +40,7 @@ class Token < ApplicationRecord
     # state :validated
     #state :used
     # state :expired 
+    after_transition on: :use, do: :after_use_event
     event 'initiate' do
       transition :nil => :initial
     end

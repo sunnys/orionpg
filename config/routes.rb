@@ -5,12 +5,19 @@ Rails.application.routes.draw do
   resources :transacts do
     collection do
       post 'get_flight_information' => 'transacts#get_flights'
+      get '/get_flight/:id' => 'transacts#get_flight'
       get '/select_flight/:id' => 'transacts#select_flight'
+      get 'get_employee_transact' => 'transacts#get_employee_transact'
+      get 'get_company_transact' => 'transacts#get_company_transact'
     end
     member do
-      post 'request_for_approval' => 'transacts#request_for_approval'
+      get 'request_for_approval' => 'transacts#request_for_approval'
       get 'approve_transaction' => 'transacts#approve_transaction'
       get 'reject_transaction' => 'transacts#reject_transaction'
+      get 'book_transaction' => 'transacts#book_transaction'
+      get 'cancel_transaction' => 'transacts#cancel_transaction'
+      get 'generate_otp' => 'transacts#generate_otp'
+      post 'verify_otp' => 'transacts#verify_otp'
     end
   end
   resources :tokens

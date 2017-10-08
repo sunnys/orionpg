@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  message: MyString
+  transact: one
+  transact_id: 1
+
+two:
+  title: MyString
+  message: MyString
+  transact: two
+  transact_id: 1
