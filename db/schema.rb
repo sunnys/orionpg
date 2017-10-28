@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171002080132) do
+ActiveRecord::Schema.define(version: 20171007190447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,15 @@ ActiveRecord::Schema.define(version: 20171002080132) do
     t.float    "total_earning"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string   "title"
+    t.string   "message"
+    t.integer  "transact_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["transact_id"], name: "index_notifications_on_transact_id", using: :btree
   end
 
   create_table "operations", force: :cascade do |t|
@@ -220,6 +229,7 @@ ActiveRecord::Schema.define(version: 20171002080132) do
   add_foreign_key "employees", "users"
   add_foreign_key "matches", "employees"
   add_foreign_key "matches", "employees", column: "reportee_id"
+  add_foreign_key "notifications", "transacts"
   add_foreign_key "operations", "accounts"
   add_foreign_key "third_party_employees", "third_party_vendors"
   add_foreign_key "third_party_vendors", "companies"
