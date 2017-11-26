@@ -9,7 +9,7 @@ class TransactsController < ApiController
   def get_employee_transact
     @user = current_user.employee
     @transacts = @user.transacts
-    render json: @transacts
+    render json: @transacts.map{|t| t.transaction_details.last}.compact
   end
 
   def get_company_transact
@@ -61,8 +61,13 @@ class TransactsController < ApiController
 
   # POST get deatils of flight
   def get_flights
-    # TODO: Change the query accordding to request
-    @flights = FlightInformation.all
+    from = params[:from]
+    to = params[:to]
+    from_date = Date.parse(params[:from_date])
+    to_date = Date.parse(params[:to_date])
+    journey1 = FlightInformation.where("source_code = ? and destination_code = ? and journey_date >= ?", from, to, from_date)
+    journey2 = FlightInformation.where("source_code = ? and destination_code = ? and journey_date >= ?", to, from, to_date)
+    @flights = journey1 + journey2
     render json: @flights
   end
 
@@ -74,7 +79,7 @@ class TransactsController < ApiController
   # POST select a particular ticket
   def select_flight
     @flight = FlightInformation.find(params[:id])
-    @current_employee = Employee.first
+    @current_employee = current_user.employee
     token = @current_employee.create_token
     @transact = @current_employee.create_transaction(token.id, @flight)
     render json: @transact 
@@ -85,6 +90,7 @@ class TransactsController < ApiController
       @token = @transact.token
       @token.request_for_approval
       @token.save!
+      TransactMailer.request_for_approval(current_user, @transact).deliver_now
       render json: @token
     else 
       render json: {message: "No Transaction found!"}
@@ -97,6 +103,7 @@ class TransactsController < ApiController
         @token = @transact.token
         @token.request_accepted
         @token.save!
+        TransactMailer.approve_transaction_notification(@transact.employee.user, @transact).deliver_now
         render json: {message: "Token is sent for approval."}
       # else
       #   render json: {message: "No Authorization!"}
@@ -112,6 +119,7 @@ class TransactsController < ApiController
         @token = @transact.token
         @token.request_rejected
         @token.save!
+        TransactMailer.reject_transaction_notification(@transact.employee.user, @transact).deliver_now
         render json: {message: "Token is sent for approval."}
       # else
       #   render json: {message: "No Authorization!"}
@@ -125,7 +133,7 @@ class TransactsController < ApiController
     if !@transact.nil?
       @token = @transact.token
       otp = @token.generate_otp
-      # TODO: send otp via e-mail
+      TransactMailer.otp_generation(current_user, @transact, otp).deliver_now
       render :text => otp
       return
     end
@@ -139,11 +147,13 @@ class TransactsController < ApiController
         @token.valid
         @token.use
         @token.save!
+        TransactMailer.valid_otp(current_user, @transact, otp).deliver_now
         render :json => {code: '200', msg: "Otp verification successful..."}
         return
       else
         # @token.cancel
         # @token.save!
+        TransactMailer.invalid_otp(current_user, @transact, otp).deliver_now
         render :json => {code: '401', msg: "Otp Verification failed..."}
         return
       end

@@ -4,7 +4,7 @@ class TransactMailer < ApplicationMailer
     def request_for_approval(user, transact)
         @user = user
         @manager = @user.employee.managers.last.user
-        @url = "#{config.client_host_url}/transactions/#{transact.id}/approve" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/approve" 
         mail(:to => @manager.email, :subject => "Request for travel approval : #{@user.email}")
     end
 
@@ -12,7 +12,7 @@ class TransactMailer < ApplicationMailer
         @user = user
         @transact = transact
         @manager = @user.employee.managers.last.user
-        @url = "#{config.client_host_url}/transactions/#{transact.id}" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/book" 
         mail(:to => @user.email, :subject => "Your travel request has been approved by : #{@manager.name}") 
     end
 
@@ -20,14 +20,14 @@ class TransactMailer < ApplicationMailer
         @user = user
         @transact = transact
         @manager = @user.employee.managers.last.user
-        @url = "#{config.client_host_url}/transactions/#{transact.id}" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}" 
         mail(:to => @user.email, :subject => "Your travel request has been rejected by : #{@manager.name}") 
     end
    
     def book_transaction_notification(user, transact)
         @user = user
         @transact = transact
-        @url = "#{config.client_host_url}/transactions/#{transact.id}/book" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/book" 
         mail(:to => @user.email, :subject => "You are booking transaction #{@transact.id}") 
     end
 
@@ -35,7 +35,7 @@ class TransactMailer < ApplicationMailer
         @user = user
         @transact = transact
         @otp = otp
-        @url = "#{config.client_host_url}/transactions/#{transact.id}/book" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/book" 
         mail(:to => @user.email, :subject => "Orionit Transactio alert: Otp #{otp} generated")
     end
 
@@ -43,7 +43,7 @@ class TransactMailer < ApplicationMailer
         @user = user
         @transact = transact
         @otp = otp
-        @url = "#{config.client_host_url}/transactions/#{transact.id}" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}" 
         mail(:to => @user.email, :subject => "Orionit Transactio alert: Otp verification successful")
     end
 
@@ -51,21 +51,21 @@ class TransactMailer < ApplicationMailer
         @user = user
         @transact = transact
         @otp = otp
-        @url = "#{config.client_host_url}/transactions/#{transact.id}" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}" 
         mail(:to => @user.email, :subject => "Orionit Transactio alert: Otp verification unsuccessful")
     end
 
     def successful_transaction_notification(user, transact)
         @user = user
         @transact = transact
-        @url = "#{config.client_host_url}/transactions/#{transact.id}/successful" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/successful" 
         mail(:to => @user.email, :subject => "Orionit Transactio alert: Transaction #{@transact.id} Successful")
     end
 
     def failed_transaction_notification(user, transact)
         @user = user
         @transact = transact
-        @url = "#{config.client_host_url}/transactions/#{transact.id}/failed" 
+        @url = "#{Rails.application.class.config.client_host_url}/transactions/#{transact.id}/failed" 
         mail(:to => @user.email, :subject => "Orionit Transactio alert: Transaction #{@transact.id} Successful")
     end
 end

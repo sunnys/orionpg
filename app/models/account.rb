@@ -4,13 +4,14 @@ class Account < ApplicationRecord
 
   def credit(amount)
     self.total = self.total + amount
-    self.operations.create!(amount: amount, type: "cr")
+    self.operations.create!(amount: amount, tr_type: "cr")
     self.save!
   end
 
   def debit(amount)
-    self.totoal = self.total - amount
-    self.operations.create!(amount: amount, type: "dr")
+    self.total = self.total - amount
+    self.operations.create!(amount: amount, tr_type: "dr")
     self.save!
   end
+  
 end

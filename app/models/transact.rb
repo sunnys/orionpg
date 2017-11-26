@@ -8,11 +8,11 @@ class Transact < ApplicationRecord
 
   def commit_transact
     company = self.employee.company
-    company.account.debit(self.amount)
+    company.account.debit(self.transaction_details.last.amount)
   end
 
   def pay_for_transaction
     company = self.employee.company
-    company.account.debit(self.amount)
+    company.account.debit(self.transaction_details.last.amount)
   end
 end
